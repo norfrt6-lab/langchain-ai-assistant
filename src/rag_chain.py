@@ -85,19 +85,21 @@ def ask_question(question, chat_history=None):
 
 
 def ask_question_stream(question, chat_history=None):
-    """Ask a question with streaming response. Yields (chunk, sources) tuples."""
+    """Ask a question with streaming response. Yields (chunk_text, sources, context_docs) tuples."""
     chain = get_rag_chain()
     formatted_history = _format_chat_history(chat_history or [])
 
     sources = []
+    context_docs = []
     for chunk in chain.stream({
         "input": question,
         "chat_history": formatted_history,
     }):
         if "context" in chunk:
-            sources = _extract_sources(chunk["context"])
+            context_docs = chunk["context"]
+            sources = _extract_sources(context_docs)
         if "answer" in chunk:
-            yield chunk["answer"], sources
+            yield chunk["answer"], sources, context_docs
 
 
 def reset_chain():
