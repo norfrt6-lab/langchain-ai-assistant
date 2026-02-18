@@ -6,7 +6,7 @@ A Retrieval-Augmented Generation (RAG) AI Assistant built with LangChain, Chroma
 
 ## Features
 
-- **Multi-format document support**: PDF, TXT files, and web pages
+- **Multi-format document support**: PDF, TXT, DOCX, CSV files, and web pages
 - **Local & free**: Uses Ollama for local LLM inference (no API costs)
 - **Persistent storage**: ChromaDB stores document embeddings across sessions
 - **Streaming chat**: Real-time response streaming with conversation history
@@ -16,6 +16,9 @@ A Retrieval-Augmented Generation (RAG) AI Assistant built with LangChain, Chroma
 - **Auto-fallback**: Falls back to HuggingFace API if Ollama is unavailable
 - **Docker deployment**: One-command deployment with docker-compose
 - **Unit tested**: 30+ tests with pytest covering all modules
+- **CI/CD**: GitHub Actions workflow for automated testing
+- **Logging**: Python logging throughout all modules
+- **Error handling**: Robust validation and error recovery
 - **Professional UI**: Custom styled interface with dark theme
 
 ## Architecture

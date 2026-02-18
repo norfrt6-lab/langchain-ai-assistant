@@ -1,6 +1,9 @@
+import logging
 from langchain_chroma import Chroma
 from src.config import CHROMA_DB_DIR, TOP_K_RESULTS
 from src.embeddings import get_embeddings
+
+logger = logging.getLogger(__name__)
 
 _vector_store = None
 
@@ -21,6 +24,7 @@ def add_documents(chunks):
     """Add document chunks to the vector store."""
     store = get_vector_store()
     store.add_documents(chunks)
+    logger.info(f"Added {len(chunks)} chunks to vector store")
     return len(chunks)
 
 
@@ -65,3 +69,4 @@ def clear_store():
     store = get_vector_store()
     store._collection.delete(where={"chunk_index": {"$gte": 0}})
     _vector_store = None
+    logger.info("Cleared all documents from vector store")

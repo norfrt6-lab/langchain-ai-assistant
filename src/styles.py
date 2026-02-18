@@ -73,6 +73,14 @@ CUSTOM_CSS = """
     background: #7c2d1220;
     border-left-color: #f97316;
 }
+.source-docx {
+    background: #1e1a5f20;
+    border-left-color: #8b5cf6;
+}
+.source-csv {
+    background: #5f1e3a20;
+    border-left-color: #ec4899;
+}
 .source-card .source-title {
     font-weight: 600;
     font-size: 0.9rem;
@@ -154,7 +162,7 @@ CUSTOM_CSS = """
 def get_source_card_html(source, index):
     """Generate HTML for a styled source card."""
     source_type = source.get("type", "unknown")
-    css_class = f"source-{source_type}" if source_type in ("pdf", "txt", "web") else "source-txt"
+    css_class = f"source-{source_type}" if source_type in ("pdf", "txt", "web", "docx", "csv") else "source-txt"
 
     name = source.get("name", "Unknown")
     page_info = f" (Page {source['page'] + 1})" if "page" in source else ""

@@ -1,6 +1,6 @@
 import time
 import streamlit as st
-from src.document_loader import load_pdf, load_txt, load_web
+from src.document_loader import load_pdf, load_txt, load_docx, load_csv, load_web
 from src.text_splitter import split_documents
 from src.vector_store import (
     add_documents,
@@ -68,8 +68,8 @@ with st.sidebar:
     # File Upload
     st.markdown("### 📄 Upload Documents")
     uploaded_files = st.file_uploader(
-        "Choose PDF or TXT files",
-        type=["pdf", "txt"],
+        "Choose files (PDF, TXT, DOCX, CSV)",
+        type=["pdf", "txt", "docx", "csv"],
         accept_multiple_files=True,
     )
 
@@ -79,8 +79,13 @@ with st.sidebar:
             if file_id not in st.session_state.processed_files:
                 with st.spinner(f"Processing {uploaded_file.name}..."):
                     try:
-                        if uploaded_file.name.endswith(".pdf"):
+                        name = uploaded_file.name.lower()
+                        if name.endswith(".pdf"):
                             docs = load_pdf(uploaded_file)
+                        elif name.endswith(".docx"):
+                            docs = load_docx(uploaded_file)
+                        elif name.endswith(".csv"):
+                            docs = load_csv(uploaded_file)
                         else:
                             docs = load_txt(uploaded_file)
 
@@ -147,7 +152,7 @@ with tab_chat:
 
     if get_document_count() == 0:
         st.info(
-            "👈 Upload documents (PDF, TXT) or load a web page from the sidebar to get started."
+            "👈 Upload documents (PDF, TXT, DOCX, CSV) or load a web page from the sidebar to get started."
         )
 
     # Display chat history

@@ -1,3 +1,4 @@
+import logging
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_classic.chains import create_retrieval_chain
@@ -11,6 +12,8 @@ Context:
 
 Chat history:
 {chat_history}"""
+
+logger = logging.getLogger(__name__)
 
 _rag_chain = None
 
@@ -44,6 +47,7 @@ def get_rag_chain():
 
     document_chain = create_stuff_documents_chain(llm, prompt)
     _rag_chain = create_retrieval_chain(retriever, document_chain)
+    logger.info("RAG chain created successfully")
     return _rag_chain
 
 

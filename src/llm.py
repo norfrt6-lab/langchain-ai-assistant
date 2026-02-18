@@ -1,4 +1,7 @@
+import logging
 from src.config import OLLAMA_BASE_URL, OLLAMA_MODEL, HF_API_TOKEN, HF_MODEL
+
+logger = logging.getLogger(__name__)
 
 _llm = None
 _llm_provider = None
@@ -49,17 +52,22 @@ def get_llm():
         return _llm, _llm_provider
 
     # Try Ollama first
+    logger.info(f"Attempting Ollama connection at {OLLAMA_BASE_URL}...")
     _llm = _try_ollama()
     if _llm:
         _llm_provider = "ollama"
+        logger.info(f"Connected to Ollama (model: {OLLAMA_MODEL})")
         return _llm, _llm_provider
 
     # Try HuggingFace fallback
+    logger.info("Ollama unavailable, trying HuggingFace fallback...")
     _llm = _try_huggingface()
     if _llm:
         _llm_provider = "huggingface"
+        logger.info(f"Connected to HuggingFace (model: {HF_MODEL})")
         return _llm, _llm_provider
 
+    logger.error("No LLM available")
     raise ConnectionError(
         "No LLM available. Please either:\n"
         "1. Install and run Ollama (https://ollama.com) with: ollama pull llama3.2\n"
