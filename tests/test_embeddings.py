@@ -1,4 +1,5 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 import src.embeddings as embeddings_module
 
 
@@ -35,8 +36,10 @@ def test_get_embeddings_uses_config():
     """Test that embeddings use the configured model name."""
     embeddings_module._embeddings = None
 
-    with patch("src.embeddings.HuggingFaceEmbeddings") as mock_hf, \
-         patch("src.embeddings.EMBEDDING_MODEL", "test-model"):
+    with (
+        patch("src.embeddings.HuggingFaceEmbeddings") as mock_hf,
+        patch("src.embeddings.EMBEDDING_MODEL", "test-model"),
+    ):
         embeddings_module.get_embeddings()
 
         call_kwargs = mock_hf.call_args

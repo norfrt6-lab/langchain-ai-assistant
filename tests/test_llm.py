@@ -1,5 +1,7 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 import pytest
+
 import src.llm as llm_module
 
 
@@ -23,8 +25,10 @@ def test_ollama_connection_success():
 
 def test_fallback_to_huggingface():
     """Test fallback to HuggingFace when Ollama fails."""
-    with patch("src.llm._try_ollama", return_value=None), \
-         patch("src.llm._try_huggingface") as mock_hf:
+    with (
+        patch("src.llm._try_ollama", return_value=None),
+        patch("src.llm._try_huggingface") as mock_hf,
+    ):
         mock_llm = MagicMock()
         mock_hf.return_value = mock_llm
 
@@ -36,10 +40,12 @@ def test_fallback_to_huggingface():
 
 def test_connection_error_when_both_fail():
     """Test ConnectionError when both Ollama and HuggingFace fail."""
-    with patch("src.llm._try_ollama", return_value=None), \
-         patch("src.llm._try_huggingface", return_value=None):
-        with pytest.raises(ConnectionError):
-            llm_module.get_llm()
+    with (
+        patch("src.llm._try_ollama", return_value=None),
+        patch("src.llm._try_huggingface", return_value=None),
+        pytest.raises(ConnectionError),
+    ):
+        llm_module.get_llm()
 
 
 def test_singleton_behavior():

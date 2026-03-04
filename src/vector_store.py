@@ -1,5 +1,7 @@
 import logging
+
 from langchain_chroma import Chroma
+
 from src.config import CHROMA_DB_DIR, TOP_K_RESULTS
 from src.embeddings import get_embeddings
 

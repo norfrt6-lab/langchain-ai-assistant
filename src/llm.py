@@ -1,5 +1,6 @@
 import logging
-from src.config import OLLAMA_BASE_URL, OLLAMA_MODEL, HF_API_TOKEN, HF_MODEL
+
+from src.config import HF_API_TOKEN, HF_MODEL, OLLAMA_BASE_URL, OLLAMA_MODEL
 
 logger = logging.getLogger(__name__)
 

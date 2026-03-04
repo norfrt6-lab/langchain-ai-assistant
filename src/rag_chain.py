@@ -1,7 +1,9 @@
 import logging
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+
 from langchain_classic.chains import create_retrieval_chain
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
+
 from src.llm import get_llm
 from src.vector_store import get_retriever
 
@@ -40,10 +42,12 @@ def get_rag_chain():
     llm, _ = get_llm()
     retriever = get_retriever()
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_PROMPT),
-        ("human", "{input}"),
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", SYSTEM_PROMPT),
+            ("human", "{input}"),
+        ]
+    )
 
     document_chain = create_stuff_documents_chain(llm, prompt)
     _rag_chain = create_retrieval_chain(retriever, document_chain)
@@ -57,7 +61,9 @@ def _extract_sources(docs):
     for doc in docs:
         meta = doc.metadata
         source_info = {
-            "content": doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content,
+            "content": doc.page_content[:200] + "..."
+            if len(doc.page_content) > 200
+            else doc.page_content,
             "type": meta.get("source_type", "unknown"),
         }
         if "filename" in meta:
@@ -77,10 +83,12 @@ def ask_question(question, chat_history=None):
     chain = get_rag_chain()
     formatted_history = _format_chat_history(chat_history or [])
 
-    result = chain.invoke({
-        "input": question,
-        "chat_history": formatted_history,
-    })
+    result = chain.invoke(
+        {
+            "input": question,
+            "chat_history": formatted_history,
+        }
+    )
 
     return {
         "answer": result["answer"],
@@ -95,10 +103,12 @@ def ask_question_stream(question, chat_history=None):
 
     sources = []
     context_docs = []
-    for chunk in chain.stream({
-        "input": question,
-        "chat_history": formatted_history,
-    }):
+    for chunk in chain.stream(
+        {
+            "input": question,
+            "chat_history": formatted_history,
+        }
+    ):
         if "context" in chunk:
             context_docs = chunk["context"]
             sources = _extract_sources(context_docs)

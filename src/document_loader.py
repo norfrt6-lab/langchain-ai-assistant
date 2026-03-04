@@ -1,14 +1,16 @@
-import os
 import csv
 import io
 import logging
+import os
+
 from langchain_community.document_loaders import (
+    Docx2txtLoader,
     PyPDFLoader,
     TextLoader,
     WebBaseLoader,
-    Docx2txtLoader,
 )
 from langchain_core.documents import Document
+
 from src.config import DATA_DIR
 
 logger = logging.getLogger(__name__)
@@ -93,7 +95,9 @@ def load_csv(uploaded_file):
         header = rows[0]
         text_parts = []
         for row in rows[1:]:
-            row_text = ", ".join(f"{h}: {v}" for h, v in zip(header, row) if v.strip())
+            row_text = ", ".join(
+                f"{h}: {v}" for h, v in zip(header, row, strict=False) if v.strip()
+            )
             if row_text:
                 text_parts.append(row_text)
 
@@ -112,7 +116,9 @@ def load_csv(uploaded_file):
                 },
             )
         ]
-        logger.info(f"Loaded CSV '{uploaded_file.name}': {len(rows)-1} rows, {len(header)} columns")
+        logger.info(
+            f"Loaded CSV '{uploaded_file.name}': {len(rows) - 1} rows, {len(header)} columns"
+        )
         return documents
     except Exception as e:
         logger.error(f"Failed to load CSV '{uploaded_file.name}': {e}")

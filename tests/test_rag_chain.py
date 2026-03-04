@@ -1,6 +1,7 @@
-from unittest.mock import patch, MagicMock
-from src.rag_chain import _format_chat_history, reset_chain
+from unittest.mock import MagicMock, patch
+
 import src.rag_chain as rag_module
+from src.rag_chain import _format_chat_history, reset_chain
 
 
 def test_format_chat_history_empty():
@@ -30,10 +31,7 @@ def test_format_chat_history_with_messages():
 
 def test_format_chat_history_max_turns():
     """Test that chat history respects max_turns limit."""
-    history = [
-        {"role": "user", "content": f"Message {i}"}
-        for i in range(10)
-    ]
+    history = [{"role": "user", "content": f"Message {i}"} for i in range(10)]
 
     result = _format_chat_history(history, max_turns=2)
 

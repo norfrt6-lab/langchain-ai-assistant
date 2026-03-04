@@ -1,16 +1,14 @@
-import os
 import importlib
+import os
 
 
 def test_default_values():
     """Test that config provides sensible defaults."""
     import src.config as config
 
-    assert config.OLLAMA_BASE_URL == os.getenv(
-        "OLLAMA_BASE_URL", "http://localhost:11434"
-    )
-    assert config.OLLAMA_MODEL == os.getenv("OLLAMA_MODEL", "llama3.2")
-    assert config.EMBEDDING_MODEL == os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+    assert os.getenv("OLLAMA_BASE_URL", "http://localhost:11434") == config.OLLAMA_BASE_URL
+    assert os.getenv("OLLAMA_MODEL", "llama3.2") == config.OLLAMA_MODEL
+    assert os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2") == config.EMBEDDING_MODEL
     assert isinstance(config.CHUNK_SIZE, int)
     assert isinstance(config.CHUNK_OVERLAP, int)
     assert isinstance(config.TOP_K_RESULTS, int)
@@ -26,6 +24,7 @@ def test_env_override(monkeypatch):
     monkeypatch.setenv("TOP_K_RESULTS", "10")
 
     import src.config as config
+
     importlib.reload(config)
 
     assert config.OLLAMA_MODEL == "test-model"
