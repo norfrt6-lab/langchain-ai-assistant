@@ -1,6 +1,6 @@
 import os
-import tempfile
 from unittest.mock import MagicMock, patch
+
 from src.document_loader import load_pdf, load_txt, load_web
 
 

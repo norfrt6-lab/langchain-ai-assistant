@@ -1,17 +1,19 @@
 import time
+
 import streamlit as st
-from src.document_loader import load_pdf, load_txt, load_docx, load_csv, load_web
+
+from src.document_loader import load_csv, load_docx, load_pdf, load_txt, load_web
+from src.evaluation import evaluate_response
+from src.llm import get_llm, reset_llm
+from src.rag_chain import ask_question_stream, reset_chain
+from src.styles import CUSTOM_CSS, get_metrics_html, get_source_card_html
 from src.text_splitter import split_documents
 from src.vector_store import (
     add_documents,
+    clear_store,
     get_document_count,
     list_sources,
-    clear_store,
 )
-from src.llm import get_llm, reset_llm
-from src.rag_chain import ask_question_stream, reset_chain
-from src.evaluation import evaluate_response
-from src.styles import CUSTOM_CSS, get_source_card_html, get_metrics_html
 
 # --- Page Config ---
 st.set_page_config(
@@ -34,8 +36,7 @@ if "eval_results" not in st.session_state:
 # --- Sidebar ---
 with st.sidebar:
     st.markdown(
-        '<div class="main-header"><h1>RAG AI Assistant</h1>'
-        "<p>Chat with your documents</p></div>",
+        '<div class="main-header"><h1>RAG AI Assistant</h1><p>Chat with your documents</p></div>',
         unsafe_allow_html=True,
     )
 
@@ -184,10 +185,12 @@ with tab_chat:
             if get_document_count() == 0:
                 response_text = "Please upload some documents first before asking questions."
                 st.markdown(response_text)
-                st.session_state.chat_history.append({
-                    "role": "assistant",
-                    "content": response_text,
-                })
+                st.session_state.chat_history.append(
+                    {
+                        "role": "assistant",
+                        "content": response_text,
+                    }
+                )
             else:
                 try:
                     full_answer = ""
@@ -213,9 +216,7 @@ with tab_chat:
                     )
 
                     # Display metrics
-                    st.markdown(
-                        get_metrics_html(metrics), unsafe_allow_html=True
-                    )
+                    st.markdown(get_metrics_html(metrics), unsafe_allow_html=True)
 
                     # Display sources
                     if sources:
@@ -226,19 +227,25 @@ with tab_chat:
                                     unsafe_allow_html=True,
                                 )
 
-                    st.session_state.chat_history.append({
-                        "role": "assistant",
-                        "content": full_answer,
-                        "sources": sources,
-                        "metrics": metrics,
-                    })
+                    st.session_state.chat_history.append(
+                        {
+                            "role": "assistant",
+                            "content": full_answer,
+                            "sources": sources,
+                            "metrics": metrics,
+                        }
+                    )
 
                     # Store for evaluation tab
-                    st.session_state.eval_results.append({
-                        "question": prompt,
-                        "answer": full_answer[:100] + "..." if len(full_answer) > 100 else full_answer,
-                        **metrics,
-                    })
+                    st.session_state.eval_results.append(
+                        {
+                            "question": prompt,
+                            "answer": full_answer[:100] + "..."
+                            if len(full_answer) > 100
+                            else full_answer,
+                            **metrics,
+                        }
+                    )
 
                 except ConnectionError as e:
                     st.error(str(e))
@@ -258,9 +265,9 @@ with tab_eval:
     else:
         # Summary metrics
         results = st.session_state.eval_results
-        avg_relevance = sum(
-            r.get("relevance", {}).get("avg_score", 0) for r in results
-        ) / len(results)
+        avg_relevance = sum(r.get("relevance", {}).get("avg_score", 0) for r in results) / len(
+            results
+        )
         avg_time = sum(r.get("response_time", 0) for r in results) / len(results)
         avg_chunks = sum(r.get("chunks_used", 0) for r in results) / len(results)
         total_queries = len(results)

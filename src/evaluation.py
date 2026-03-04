@@ -1,5 +1,5 @@
-import time
 import numpy as np
+
 from src.embeddings import get_embeddings
 
 

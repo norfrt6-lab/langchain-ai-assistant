@@ -1,6 +1,7 @@
-import tempfile
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
+
 from langchain_core.documents import Document
+
 import src.vector_store as vs_module
 
 
@@ -33,9 +34,7 @@ def test_add_documents():
 def test_search():
     """Test searching for similar documents."""
     mock_store, _ = _make_mock_store()
-    mock_store.similarity_search.return_value = [
-        Document(page_content="result", metadata={})
-    ]
+    mock_store.similarity_search.return_value = [Document(page_content="result", metadata={})]
     vs_module._vector_store = mock_store
 
     results = vs_module.search("test query", k=2)

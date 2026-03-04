@@ -2,14 +2,34 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
-  test:
+  lint:
+    name: Lint & Format
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Check formatting
+        run: ruff format --check .
+
+      - name: Lint
+        run: ruff check .
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -30,11 +50,11 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run tests
-        run: python -m pytest tests/ -v
+        run: python -m pytest tests/ -v --tb=short
 
-  lint:
+  typecheck:
+    name: Type Check
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -44,13 +64,9 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Check syntax errors
-        run: python -m py_compile app.py && echo "app.py OK"
-
-      - name: Check all src modules
         run: |
-          for f in src/*.py; do
-            python -m py_compile "$f" && echo "$f OK"
-          done
+          pip install -r requirements.txt
+          pip install mypy
+
+      - name: Run mypy
+        run: mypy src/ --ignore-missing-imports

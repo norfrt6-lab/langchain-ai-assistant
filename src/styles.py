@@ -162,7 +162,11 @@ CUSTOM_CSS = """
 def get_source_card_html(source, index):
     """Generate HTML for a styled source card."""
     source_type = source.get("type", "unknown")
-    css_class = f"source-{source_type}" if source_type in ("pdf", "txt", "web", "docx", "csv") else "source-txt"
+    css_class = (
+        f"source-{source_type}"
+        if source_type in ("pdf", "txt", "web", "docx", "csv")
+        else "source-txt"
+    )
 
     name = source.get("name", "Unknown")
     page_info = f" (Page {source['page'] + 1})" if "page" in source else ""
@@ -189,7 +193,7 @@ def get_metrics_html(metrics):
     return f"""
     <div class="metrics-panel">
         <div class="metric-card">
-            <div class="metric-value">{metrics.get('response_time', 0)}s</div>
+            <div class="metric-value">{metrics.get("response_time", 0)}s</div>
             <div class="metric-label">Response Time</div>
         </div>
         <div class="metric-card">
@@ -197,11 +201,11 @@ def get_metrics_html(metrics):
             <div class="metric-label">Relevance Score</div>
         </div>
         <div class="metric-card">
-            <div class="metric-value">{metrics.get('chunks_used', 0)}</div>
+            <div class="metric-value">{metrics.get("chunks_used", 0)}</div>
             <div class="metric-label">Chunks Used</div>
         </div>
         <div class="metric-card">
-            <div class="metric-value">{metrics.get('answer_words', 0)}</div>
+            <div class="metric-value">{metrics.get("answer_words", 0)}</div>
             <div class="metric-label">Words</div>
         </div>
     </div>
