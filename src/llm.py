@@ -35,7 +35,7 @@ def _try_huggingface():
         from langchain_huggingface import HuggingFaceEndpoint
 
         llm = HuggingFaceEndpoint(
-            repo_id=HF_MODEL,
+            repo_id=HF_MODEL,  # type: ignore[call-arg]
             huggingfacehub_api_token=HF_API_TOKEN,
             temperature=0.7,
             max_new_tokens=512,
