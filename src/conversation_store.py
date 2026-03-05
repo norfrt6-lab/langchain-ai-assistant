@@ -62,6 +62,7 @@ def create_conversation(title: str = "New Chat") -> int:
     conn = _get_conn()
     cursor = conn.execute("INSERT INTO conversations (title) VALUES (?)", (title,))
     conn.commit()
+    assert cursor.lastrowid is not None
     return cursor.lastrowid
 
 
@@ -83,6 +84,7 @@ def add_message(
         (conversation_id,),
     )
     conn.commit()
+    assert cursor.lastrowid is not None
     return cursor.lastrowid
 
 
